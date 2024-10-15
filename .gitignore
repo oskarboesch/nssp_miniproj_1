@@ -1,0 +1,55 @@
+# Ignore all MacOS-specific system files
+.DS_Store
+.DS_Store?
+
+# Ignore IPython and Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore Python compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Ignore environment and package management files
+.env
+.venv
+env/
+venv/
+*.env
+*.yaml
+*.yml
+*.lock
+
+# Ignore virtual environment and package folders
+pip-wheel-metadata/
+*.egg-info/
+*.eggs/
+*.whl
+
+# Ignore data files
+data/raw/
+data/processed/
+data/metadata
+
+# Ignore large result files
+results/glm/
+results/ica/
+results/logs/
+
+# Ignore temporary or log files
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# Ignore personal configurations (like VSCode or PyCharm settings)
+.vscode/
+.idea/
+
+# Ignore Jupyter Notebook metadata
+*.ipynb-meta
