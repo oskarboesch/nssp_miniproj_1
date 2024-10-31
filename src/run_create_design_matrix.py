@@ -22,7 +22,7 @@ def create_design_matrix():
     # Load the functional image to extract TR and run durations
     img = nib.load(os.path.join(base_dir, "func", "sub-control01_task-music_run-1_bold.nii.gz"))
     TR = img.header.get_zooms()[3]
-    run_durations = [events[i]['onset'].max() + events[i]['duration'].max() for i in range(3)]
+    run_durations = [events[i]['onset'].iloc[-1] + events[i]['duration'].iloc[-1] for i in range(3)]
 
 
 
