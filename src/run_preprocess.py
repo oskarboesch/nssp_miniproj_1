@@ -1,7 +1,7 @@
 import os
 import nibabel as nib
 from nilearn.image import concat_imgs, smooth_img
-from nipype.interfaces import fsl
+from nipype.interfaces.fsl import BET, MCFLIRT
 
 def preprocess_data():
    # Define paths relative to the src folder
@@ -9,7 +9,12 @@ def preprocess_data():
     preprocess_dir = os.path.join("..", "data", "preprocessed", "sub-control01")  # Preprocess folder
     preprocess_anat_dir = os.path.join(preprocess_dir, "anat")  # Anatomical folder
     preprocess_func_dir = os.path.join(preprocess_dir, "func")  # Functional folder
-
+    anat_path = os.path.join(base_dir, "anat", "sub-control01_T1w.nii.gz")
+    func_paths = [
+        os.path.join(base_dir, "func", "sub-control01_task-music_run-1_bold.nii.gz"),
+        os.path.join(base_dir, "func", "sub-control01_task-music_run-2_bold.nii.gz"),
+        os.path.join(base_dir, "func", "sub-control01_task-music_run-3_bold.nii.gz")
+    ]
     # Create preprocess directory if it doesn't exist
     if not os.path.exists(preprocess_dir):
         os.makedirs(preprocess_dir)
@@ -18,14 +23,9 @@ def preprocess_data():
     if not os.path.exists(preprocess_func_dir):
         os.makedirs(preprocess_func_dir)
 
-    anat_path = os.path.join(base_dir, "anat", "sub-control01_T1w.nii.gz")
-    func_paths = [
-        os.path.join(base_dir, "func", "sub-control01_task-music_run-1_bold.nii.gz"),
-        os.path.join(base_dir, "func", "sub-control01_task-music_run-2_bold.nii.gz"),
-        os.path.join(base_dir, "func", "sub-control01_task-music_run-3_bold.nii.gz")
-    ]
+    
     # Perform skull stripping
-    bet = fsl.BET(in_file=anat_path, out_file=os.path.join(preprocess_anat_dir,"brain_anat.nii.gz"), mask=True)
+    bet = BET(in_file=anat_path, out_file=os.path.join(preprocess_anat_dir,"brain_anat.nii.gz"), mask=True)
     bet.run()
 
     # Perform standardisation for each run
@@ -39,7 +39,6 @@ def preprocess_data():
     # Load functional images
     func_imgs = [nib.load(func_path) for func_path in func_paths]
     
-
     # Concatenate functional runs
     concat_img = concat_imgs(func_imgs)
 
@@ -48,7 +47,7 @@ def preprocess_data():
     concat_img.to_filename(concat_img_path)
 
     # Motion correction
-    mcflirt = fsl.MCFLIRT(in_file=concat_img_path, out_file=os.path.join(preprocess_func_dir, "motion_corrected.nii.gz"))
+    mcflirt = MCFLIRT(in_file=concat_img_path, out_file=os.path.join(preprocess_func_dir, "motion_corrected.nii.gz"))
     mcflirt.run()
 
     # Apply smoothing

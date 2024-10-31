@@ -30,7 +30,7 @@ pip-wheel-metadata/
 
 # Ignore data files
 data/raw/
-data/processed/
+data/preprocessed/
 data/metadata
 
 # Ignore large result files
