@@ -36,11 +36,11 @@ def create_design_matrix():
     total_duration = sum(run_durations)
     frame_times = np.arange(0, total_duration, TR)
 
-    # Generate the design matrix
+    # Generate the design matrix with slice timing correction
     design_matrix = make_first_level_design_matrix(
         frame_times,
         all_events,
-        hrf_model='spm'
+        hrf_model='spm + derivative'
     )
 
     # Save the design matrix as a CSV file
