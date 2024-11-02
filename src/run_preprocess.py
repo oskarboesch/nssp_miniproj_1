@@ -2,6 +2,7 @@ import os
 import nibabel as nib
 from nilearn.image import concat_imgs, smooth_img
 from nipype.interfaces.fsl import BET, MCFLIRT
+from preprocess.coregistrate import coregister_fmri_to_mni
 
 def preprocess_data():
    # Define paths relative to the src folder
@@ -54,7 +55,12 @@ def preprocess_data():
     smoothed_img = smooth_img(os.path.join(preprocess_func_dir, "motion_corrected.nii.gz"), fwhm=5)
 
     # Save final output
-    smoothed_img.to_filename(os.path.join(preprocess_func_dir, "preprocessed_data.nii.gz"))
+    preproccessed_img_path = os.path.join(preprocess_func_dir, "preprocessed_data.nii.gz")
+    smoothed_img.to_filename(preproccessed_img_path)
+    
+    # Coregister the preprocessed image to MNI space
+    coregistered_img = coregister_fmri_to_mni(preproccessed_img_path, output_dir=preprocess_func_dir)
+
 
 
 if __name__ == "__main__":
