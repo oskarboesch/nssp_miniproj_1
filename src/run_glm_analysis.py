@@ -66,7 +66,7 @@ def main() -> None:
     z_map = fmri_glm.compute_contrast(contrast, output_type='z_score')
 
     # Plot and save the Z-map
-    plot_stat_map(z_map, bg_img=_mean_img, threshold=2, display_mode='z', cut_coords=[-30, 5, 14], black_bg=True, title='Active minus Rest (Z>2)')
+    plot_stat_map(z_map, bg_img=_mean_img, threshold=2, display_mode='z', cut_coords=[-30, 5, 14], black_bg=True, title='Z-map (Z>2)')
     plt.savefig(os.path.join(figures_dir, "z_map.png"))
 
     # Apply FPR correction and save the thresholded map
@@ -74,7 +74,7 @@ def main() -> None:
     thresholded_map, threshold = threshold_stats_img(z_map, alpha=0.05, height_control='fpr', cluster_threshold=cluster_size)
     thresholded_map.to_filename(os.path.join(preprocess_dir, "thresholded_map.nii.gz"))
     _mean_img.to_filename(os.path.join(preprocess_dir, "mean_img.nii.gz"))
-    plot_stat_map(thresholded_map, bg_img=_mean_img, threshold=threshold, title="Thresholded Z-map (Z>{threshold})", display_mode='z', cut_coords=[-30, 5, 14], colorbar=True)
+    plot_stat_map(thresholded_map, bg_img=_mean_img, threshold=threshold, title=f"Fpr Z-map (Z>{round(threshold, 2)})", display_mode='z', cut_coords=[-30, 5, 14], colorbar=True)
     plt.savefig(os.path.join(figures_dir, "fpr_z_map.png"))
     plt.close()
 
