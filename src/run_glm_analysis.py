@@ -41,14 +41,15 @@ def find_brain_regions(thresholded_map: nib.Nifti1Image) -> None:
 
 def main() -> None:
     # Define paths
-    preprocess_dir = os.path.join("data", "preprocessed", "sub-control01")
+    preprocess_dir = os.path.join("..", "data", "preprocessed", "sub-control01")
+    preprocess_func_dir = os.path.join(preprocess_dir, "func")
     figures_dir = os.path.join("results", "figures")
 
     # Load the design matrix
     design_matrix = pd.read_csv(os.path.join(preprocess_dir, "design_matrix.csv"))
 
     # Load the preprocessed functional image
-    img = nib.load(os.path.join(preprocess_dir, "preprocessed_data.nii.gz"))
+    img = nib.load(os.path.join(preprocess_func_dir, "preprocessed_data.nii.gz"))
     TR = img.header.get_zooms()[3].item()
 
     # Perform the GLM analysis
