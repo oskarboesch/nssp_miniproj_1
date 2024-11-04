@@ -1,7 +1,7 @@
 from nilearn.glm import threshold_stats_img
-from nilearn.plotting import plot_stat_map, plot_design_matrix
+from nilearn.plotting import plot_stat_map, plot_design_matrix, plot_anat, plot_img
 from nilearn.glm.first_level import FirstLevelModel
-from nilearn.image import mean_img
+from nilearn.image import mean_img, concat_imgs
 import os
 import pandas as pd
 import numpy as np
@@ -33,6 +33,23 @@ def main() -> None:
     plot_design_matrix(design_matrix)
     plt.savefig(os.path.join(figures_dir, "design_matrix_glm_analysis.png"))
 
+
+    # Beta maps and z-maps of each of our regressors 
+    regressors = ['negative_music', 'positive_music', 'response', 'tones'] # We select the regressors of interest
+    for regressor in regressors:
+        # Create a contrast vector with a 1 for the current regressor and 0 for others
+        contrast = np.zeros(len(design_matrix.columns))
+        contrast[design_matrix.columns.get_loc(regressor)] = 1
+
+        # Compute beta map and z-map for this contrast
+        beta_map = fmri_glm.compute_contrast(contrast, output_type='effect_size')
+        z_map = fmri_glm.compute_contrast(contrast, output_type='z_score')
+
+        # Save the beta map and the z-map
+        beta_map.to_filename(os.path.join(figures_dir, f"beta_map_{regressor}.nii.gz"))
+        z_map.to_filename(os.path.join(figures_dir, f"z_map_{regressor}.nii.gz"))
+        
+    
     # Compute the contrast
     _mean_img = mean_img(img)
     contrast = np.eye(design_matrix.shape[1])[0] - np.eye(design_matrix.shape[1])[1]
