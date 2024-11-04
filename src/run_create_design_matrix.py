@@ -1,7 +1,6 @@
 import os
 import nibabel as nib
 from nilearn.plotting import plot_design_matrix
-from nilearn.glm.first_level import make_first_level_design_matrix
 from nilearn.glm.first_level import FirstLevelModel
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -9,10 +8,9 @@ import numpy as np
 
 def create_design_matrix():
    # Define paths relative to the src folder
-    base_dir = os.path.join("data", "sub-control01")  # Navigate up one directory and then into data
-    preprocess_dir = os.path.join("data", "preprocessed", "sub-control01")  # Preprocess folder
-    figures_dir = os.path.join("results", "figures")  # Figures folder
-
+    base_dir = os.path.join("..","data","raw", "sub-control01")  # Navigate up one directory and then into data
+    preprocess_dir = os.path.join("..","data", "preprocessed", "sub-control01")  # Preprocess folder
+    figures_dir = os.path.join("..","results", "figures")  # Figures folder
     # Load the event files for each run
     events = [
         pd.read_csv(os.path.join(base_dir, "func", "sub-control01_task-music_run-1_events.tsv"), sep="\t"),
@@ -22,7 +20,7 @@ def create_design_matrix():
 
     # Load the functional image to extract TR and run durations
     img = nib.load(os.path.join(base_dir, "func", "sub-control01_task-music_run-1_bold.nii.gz"))
-    img_to_fit = nib.load(os.path.join(preprocess_dir, "preprocessed_data.nii.gz"))
+    img_to_fit = nib.load(os.path.join(preprocess_dir,"func", "preprocessed_data.nii.gz"))
     TR = img.header.get_zooms()[3]
     run_durations = [events[i]['onset'].iloc[-1] + events[i]['duration'].iloc[-1] for i in range(3)]
 
