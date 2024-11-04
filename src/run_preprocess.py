@@ -1,7 +1,7 @@
 import os
 import nibabel as nib
 from nilearn.image import concat_imgs, smooth_img
-from nipype.interfaces.fsl import BET, MCFLIRT
+from nipype.interfaces.fsl import BET, MCFLIRT, SliceTimer
 from preprocess.coregistrate import coregister_fmri_to_mni
 
 def preprocess_data():
@@ -29,13 +29,28 @@ def preprocess_data():
     bet = BET(in_file=anat_path, out_file=os.path.join(preprocess_anat_dir,"brain_anat.nii.gz"), mask=True)
     bet.run()
 
-    # Perform standardisation for each run
+    # Standardize and save each functional run
+    standardized_func_paths = []
     for func_path in func_paths:
         # Standardise the intensity values of the functional image
         img = nib.load(func_path)
         img_standard = (img.get_fdata() - img.get_fdata().mean()) / img.get_fdata().std()
         img_standard_nii = nib.Nifti1Image(img_standard, img.affine)
         img_standard_nii.to_filename(os.path.join(preprocess_func_dir, os.path.basename(func_path)))
+        standardized_func_paths.append(os.path.join(preprocess_func_dir, os.path.basename(func_path)))
+
+    # Slice Timing Correction
+    slice_timing_corrected_paths = []
+    for func_path in standardized_func_paths:
+        slicetimer = SliceTimer(
+            in_file=func_path,
+            out_file=os.path.join(preprocess_func_dir, "slicetimed_" + os.path.basename(func_path)),
+            time_repetition=3,
+            slice_direction=1,  # 1 for ascending, 2 for descending
+            interleaved=True
+        )
+        slicetimer.run()
+        slice_timing_corrected_paths.append(slicetimer.inputs.out_file)
 
     # Load functional images
     func_imgs = [nib.load(func_path) for func_path in func_paths]
