@@ -2,15 +2,16 @@ import os
 import nibabel as nib
 from nilearn.plotting import plot_design_matrix
 from nilearn.glm.first_level import make_first_level_design_matrix
+from nilearn.glm.first_level import FirstLevelModel
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
 def create_design_matrix():
    # Define paths relative to the src folder
-    base_dir = os.path.join("..", "data", "raw", "sub-control01")  # Navigate up one directory and then into data
-    preprocess_dir = os.path.join("..", "data", "preprocessed", "sub-control01")  # Preprocess folder
-    figures_dir = os.path.join("..","results", "figures")  # Figures folder
+    base_dir = os.path.join("data", "sub-control01")  # Navigate up one directory and then into data
+    preprocess_dir = os.path.join("data", "preprocessed", "sub-control01")  # Preprocess folder
+    figures_dir = os.path.join("results", "figures")  # Figures folder
 
     # Load the event files for each run
     events = [
@@ -21,6 +22,7 @@ def create_design_matrix():
 
     # Load the functional image to extract TR and run durations
     img = nib.load(os.path.join(base_dir, "func", "sub-control01_task-music_run-1_bold.nii.gz"))
+    img_to_fit = nib.load(os.path.join(preprocess_dir, "preprocessed_data.nii.gz"))
     TR = img.header.get_zooms()[3]
     run_durations = [events[i]['onset'].iloc[-1] + events[i]['duration'].iloc[-1] for i in range(3)]
 
@@ -36,13 +38,17 @@ def create_design_matrix():
     total_duration = sum(run_durations)
     frame_times = np.arange(0, total_duration, TR)
 
-    # Generate the design matrix with slice timing correction
-    design_matrix = make_first_level_design_matrix(
-        frame_times,
-        all_events,
-        hrf_model='spm + derivative'
+    # Generate the design matrix
+    fmri_glm = FirstLevelModel(
+    t_r=3.0,
+    noise_model="ar1",
+    standardize=False,
+    hrf_model= "spm + derivative",
+    drift_model="cosine",
+    high_pass=0.01,
     )
-
+    fmri_glm = fmri_glm.fit(img_to_fit, events=all_events)
+    design_matrix = fmri_glm.design_matrices_[0]
     # Save the design matrix as a CSV file
     design_matrix.to_csv(os.path.join(preprocess_dir, "design_matrix.csv"), index=False)
 
