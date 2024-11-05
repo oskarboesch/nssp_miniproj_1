@@ -2,7 +2,7 @@ import os
 import nibabel as nib
 from nilearn.image import concat_imgs, smooth_img
 from nipype.interfaces.fsl import BET, MCFLIRT, SliceTimer
-from preprocess.coregistrate import coregister_fmri_to_mni
+from preprocess.coregistrate import coregister_anat_to_mni, coregister_fmri_to_anat_epireg, merge_volumes
 
 def preprocess_data():
    # Define paths relative to the src folder
@@ -22,59 +22,65 @@ def preprocess_data():
     if not os.path.exists(preprocess_anat_dir):
         os.makedirs(preprocess_anat_dir)
     if not os.path.exists(preprocess_func_dir):
-        os.makedirs(preprocess_func_dir)
-
+        os.makedirs(preprocess_func_dir)    
     
-    # Perform skull stripping
-    bet = BET(in_file=anat_path, out_file=os.path.join(preprocess_anat_dir,"brain_anat.nii.gz"), mask=True)
-    bet.run()
+    # # Perform skull stripping
+    # skull_stripped_brain = os.path.join(preprocess_anat_dir,"brain_anat.nii.gz")
+    # bet = BET(in_file=anat_path, out_file=skull_stripped_brain, mask=True)
+    # bet.run()
 
-    # Standardize and save each functional run
-    standardized_func_paths = []
-    for func_path in func_paths:
-        # Standardise the intensity values of the functional image
-        img = nib.load(func_path)
-        img_standard = (img.get_fdata() - img.get_fdata().mean()) / img.get_fdata().std()
-        img_standard_nii = nib.Nifti1Image(img_standard, img.affine)
-        img_standard_nii.to_filename(os.path.join(preprocess_func_dir, os.path.basename(func_path)))
-        standardized_func_paths.append(os.path.join(preprocess_func_dir, os.path.basename(func_path)))
+    # # Perform Spatial Normalization on the anatomical image
+    # anat2mni_mat, anat2mni_linear, head2mni_linear = coregister_anat_to_mni(skull_stripped_brain, output_dir=preprocess_anat_dir, anat_head_img_path=anat_path)
 
-    # Slice Timing Correction
-    slice_timing_corrected_paths = []
-    for func_path in standardized_func_paths:
-        slicetimer = SliceTimer(
-            in_file=func_path,
-            out_file=os.path.join(preprocess_func_dir, "slicetimed_" + os.path.basename(func_path)),
-            time_repetition=3,
-            slice_direction=1,  # 1 for ascending, 2 for descending
-            interleaved=True
-        )
-        slicetimer.run()
-        slice_timing_corrected_paths.append(slicetimer.inputs.out_file)
+    # # Standardize and save each functional run
+    # standardized_func_paths = []
+    # for func_path in func_paths:
+    #     # Standardise the intensity values of the functional image
+    #     img = nib.load(func_path)
+    #     img_standard = (img.get_fdata() - img.get_fdata().mean()) / img.get_fdata().std()
+    #     img_standard_nii = nib.Nifti1Image(img_standard, img.affine)
+    #     img_standard_nii.to_filename(os.path.join(preprocess_func_dir, os.path.basename(func_path)))
+    #     standardized_func_paths.append(os.path.join(preprocess_func_dir, os.path.basename(func_path)))
 
-    # Load functional images
-    func_imgs = [nib.load(func_path) for func_path in func_paths]
+    # # Slice Timing Correction
+    # slice_timing_corrected_paths = []
+    # for func_path in standardized_func_paths:
+    #     slicetimer = SliceTimer(
+    #         in_file=func_path,
+    #         out_file=os.path.join(preprocess_func_dir, "slicetimed_" + os.path.basename(func_path)),
+    #         time_repetition=3,
+    #         slice_direction=1,  # 1 for ascending, 2 for descending
+    #         interleaved=True
+    #     )
+    #     slicetimer.run()
+    #     slice_timing_corrected_paths.append(slicetimer.inputs.out_file)
+
+    # # Load functional images
+    # func_imgs = [nib.load(func_path) for func_path in func_paths]
     
-    # Concatenate functional runs
-    concat_img = concat_imgs(func_imgs)
+    # # Concatenate functional runs
+    # concat_img = concat_imgs(func_imgs)
 
-    # Save the concatenated image to a file
-    concat_img_path = os.path.join(preprocess_func_dir, "concatenated_func.nii.gz")
-    concat_img.to_filename(concat_img_path)
+    # # Save the concatenated image to a file
+    # concat_img_path = os.path.join(preprocess_func_dir, "concatenated_func.nii.gz")
+    # concat_img.to_filename(concat_img_path)
 
-    # Motion correction
-    mcflirt = MCFLIRT(in_file=concat_img_path, out_file=os.path.join(preprocess_func_dir, "motion_corrected.nii.gz"))
-    mcflirt.run()
+    # # Motion correction
+    # mcflirt = MCFLIRT(in_file=concat_img_path, out_file=os.path.join(preprocess_func_dir, "motion_corrected.nii.gz"))
+    # mcflirt.run()
 
+    #motion_corrected_img_path = os.path.join(preprocess_func_dir, "motion_corrected.nii.gz")
+
+    #coregistered_img = coregister_fmri_to_anat_epireg(motion_corrected_img_path,preprocess_anat_dir, output_dir=preprocess_func_dir)
+    #merge_volumes(preprocess_func_dir=preprocess_func_dir)
     # Apply smoothing
-    smoothed_img = smooth_img(os.path.join(preprocess_func_dir, "motion_corrected.nii.gz"), fwhm=5)
+    coregistered_img = os.path.join(preprocess_func_dir, "coregistered_data.nii.gz")
+    smoothed_img = smooth_img(coregistered_img, fwhm=5)
 
     # Save final output
     preproccessed_img_path = os.path.join(preprocess_func_dir, "preprocessed_data.nii.gz")
     smoothed_img.to_filename(preproccessed_img_path)
     
-    # Coregister the preprocessed image to MNI space
-    coregistered_img = coregister_fmri_to_mni(preproccessed_img_path, output_dir=preprocess_func_dir)
 
 
 
