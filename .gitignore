@@ -35,6 +35,7 @@ data/metadata
 
 # Ignore large result files
 results/glm/
+results/ica/
 results/logs/
 
 # Ignore temporary or log files

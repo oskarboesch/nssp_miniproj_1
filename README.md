@@ -17,15 +17,12 @@ The dataset used is from OpenNeuro ([Dataset: ds000171](https://openneuro.org/da
 │
 ├── 📁 data/              # Raw and processed data
 │   ├── raw/              # Raw fMRI data from OpenNeuro
-│   ├── processed/        # Preprocessed fMRI data (motion correction, smoothing)
-│   └── metadata/         # Experiment details, participant info, design matrices
+│   └── processed/        # Preprocessed fMRI data (motion correction, smoothing)
 │
 ├── 📁 src/               # Source code for preprocessing and analysis
 │   ├── preprocess/       # Preprocessing scripts (motion correction, smoothing, etc.)
 │   ├── glm/              # Scripts for General Linear Model (GLM) analysis
-│   ├── ica/              # Independent Component Analysis (ICA) scripts
-│   ├── utils/            # Helper functions (loading data, plotting, etc.)
-│   └── analysis/         # Second-level analysis and results
+│   └── ica/              # Independent Component Analysis (ICA) scripts
 │
 ├── 📁 notebooks/         # Jupyter notebooks for step-by-step analysis
 │   ├── preprocessing.ipynb
@@ -35,8 +32,7 @@ The dataset used is from OpenNeuro ([Dataset: ds000171](https://openneuro.org/da
 ├── 📁 results/           # GLM and ICA outputs
 │   ├── glm/              # GLM analysis outputs (beta maps, contrast maps, etc.)
 │   ├── ica/              # ICA component maps and analyses
-│   ├── figures/          # Figures like design matrices, brain region maps
-│   └── logs/             # Processing logs
+│   └── figures/          # Figures like design matrices, brain region maps
 │
 ├── 📁 docs/              # Documentation and report
 │   └── report/           # Final report files and theoretical answers
@@ -85,6 +81,10 @@ Subjects listened to blocks of positive or negative emotional music interleaved 
 Preprocess the fMRI data using motion correction and smoothing steps.
 
 - Script location: `src/preprocess/preprocess.py`
+- Run script: 
+  ```bash
+  cd src/preprocess
+  python preprocess.py
 - Jupyter Notebook: `notebooks/preprocessing.ipynb`
 
 #### 2. GLM Analysis
@@ -92,6 +92,10 @@ Preprocess the fMRI data using motion correction and smoothing steps.
 Run the General Linear Model (GLM) to find beta maps and contrast maps for positive versus negative music.
 
 - Script location: `src/glm/glm_analysis.py`
+- - Run script: 
+  ```bash
+  cd src/glm
+  python glm_analysis.py
 - Jupyter Notebook: `notebooks/glm_analysis.ipynb`
 
 #### 3. ICA Analysis (Variant 2)
@@ -99,6 +103,10 @@ Run the General Linear Model (GLM) to find beta maps and contrast maps for posit
 Perform Independent Component Analysis (ICA) to find spatial patterns in the fMRI data.
 
 - Script location: `src/ica/ica_analysis.py`
+- - Run script: 
+  ```bash
+  cd src/ica
+  python ica_analysis.py
 - Jupyter Notebook: `notebooks/ica_analysis.ipynb`
 
 ### Results
