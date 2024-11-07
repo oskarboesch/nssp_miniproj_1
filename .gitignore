@@ -18,8 +18,7 @@ __pycache__/
 env/
 venv/
 *.env
-*.yaml
-*.yml
+.yaml
 *.lock
 
 # Ignore virtual environment and package folders
@@ -35,6 +34,7 @@ data/metadata
 
 # Ignore large result files
 results/glm/
+results/ica/
 results/logs/
 
 # Ignore temporary or log files
