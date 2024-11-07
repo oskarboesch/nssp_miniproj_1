@@ -18,8 +18,7 @@ __pycache__/
 env/
 venv/
 *.env
-*.yaml
-*.yml
+.yaml
 *.lock
 
 # Ignore virtual environment and package folders
