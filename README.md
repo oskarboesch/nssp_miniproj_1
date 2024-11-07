@@ -38,7 +38,7 @@ The dataset used is from OpenNeuro ([Dataset: ds000171](https://openneuro.org/da
 │
 ├── environment.yml       # Conda environment configuration file
 ├── .gitignore            # Ignored files and directories
-├── README.md             # Project overview
+└── README.md             # Project overview
 
 ```
 
