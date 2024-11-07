@@ -95,8 +95,6 @@ Run the General Linear Model (GLM) to find beta maps and contrast maps for posit
 
 Perform Independent Component Analysis (ICA) to find spatial patterns in the fMRI data.
 
-- Script location: `src/ica/ica_analysis.py`
-
 - Jupyter Notebook: `notebooks/ica_analysis.ipynb`
 
 ### Results
