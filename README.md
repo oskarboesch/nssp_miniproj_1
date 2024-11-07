@@ -20,12 +20,11 @@ The dataset used is from OpenNeuro ([Dataset: ds000171](https://openneuro.org/da
 │   └── processed/        # Preprocessed fMRI data (motion correction, smoothing)
 │
 ├── 📁 src/               # Source code for preprocessing and analysis
-│   ├── preprocess/       # Preprocessing scripts (motion correction, smoothing, etc.)
-│   ├── glm/              # Scripts for General Linear Model (GLM) analysis
-│   └── ica/              # Independent Component Analysis (ICA) scripts
+│   ├── preprocess/       # Preprocessing helper for coregistration
+│   ├── glm/              # General Linear Model (GLM) analysis helper
+│   └── run_preprocess.py # Preprocessing scripts (motion correction, smoothing, etc.)
 │
 ├── 📁 notebooks/         # Jupyter notebooks for step-by-step analysis
-│   ├── preprocessing.ipynb
 │   ├── glm_analysis.ipynb
 │   └── ica_analysis.ipynb
 │
@@ -65,8 +64,8 @@ Subjects listened to blocks of positive or negative emotional music interleaved 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/neuro-signal-processing-project.git
-   cd neuro-signal-processing-project 
+   git clone https://github.com/oskarboesch/nssp_miniproj_1.git
+   cd nssp_miniproj_1
 
 2. Create and activate the Conda environment:
    ```bash
@@ -80,22 +79,16 @@ Subjects listened to blocks of positive or negative emotional music interleaved 
 
 Preprocess the fMRI data using motion correction and smoothing steps.
 
-- Script location: `src/preprocess/preprocess.py`
+- Script location: `src/run_preprocess.py`
 - Run script: 
   ```bash
-  cd src/preprocess
-  python preprocess.py
-- Jupyter Notebook: `notebooks/preprocessing.ipynb`
+  cd src
+  python run_preprocess.py
 
 #### 2. GLM Analysis
 
 Run the General Linear Model (GLM) to find beta maps and contrast maps for positive versus negative music.
 
-- Script location: `src/glm/glm_analysis.py`
-- - Run script: 
-  ```bash
-  cd src/glm
-  python glm_analysis.py
 - Jupyter Notebook: `notebooks/glm_analysis.ipynb`
 
 #### 3. ICA Analysis (Variant 2)
@@ -103,10 +96,7 @@ Run the General Linear Model (GLM) to find beta maps and contrast maps for posit
 Perform Independent Component Analysis (ICA) to find spatial patterns in the fMRI data.
 
 - Script location: `src/ica/ica_analysis.py`
-- - Run script: 
-  ```bash
-  cd src/ica
-  python ica_analysis.py
+
 - Jupyter Notebook: `notebooks/ica_analysis.ipynb`
 
 ### Results
